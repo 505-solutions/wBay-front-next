@@ -178,7 +178,7 @@ export const Transaction = () => {
 
   const test = async () => {
     const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
-      nonce: '1234567890',
+      nonce: '12344566787',
       statement: 'Sign in to access the Mini App',
     });
    
@@ -197,7 +197,7 @@ export const Transaction = () => {
     const result = await MiniKit.commandsAsync.sendTransaction({
       transaction: [
         {
-          address: "0x419199aeaDdC8a5937Bb62046FEe24CE27b07ad1",
+          address: "0x43a90760cbCc9c438afc10F9B7223Ef0f9801554",
           abi: abi,
           functionName: 'verifyAndExecute',
           args: [
