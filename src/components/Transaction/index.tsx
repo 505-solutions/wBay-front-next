@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { createPublicClient, decodeAbiParameters, parseAbiParameters, http } from 'viem';
 import { worldchain } from 'viem/chains';
 import abi from './ContractAbi.json';
+import abi2 from './ItemManager.json';
 
 /**
  * This component is used to get a token from a contract
@@ -216,6 +217,58 @@ export const Transaction = () => {
     console.log("result", result);
   }
 
+  const addMockItem = async () => {
+    const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
+      nonce: '12344566787',
+      statement: 'Sign in to access the Mini App',
+    });
+   
+    const { finalPayload } = await MiniKit.commandsAsync.verify({
+      action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
+      verification_level: VerificationLevel.Orb,
+      signal: MiniKit.user.walletAddress,
+    });
+
+    const proof = finalPayload as ISuccessResult;
+
+
+
+    console.log("address", MiniKit.user.walletAddress);
+
+    const result = await MiniKit.commandsAsync.sendTransaction({
+      transaction: [
+        {
+          address: "0x9ef0467BbdE9134D79D8ee01bC78D38C6D906DfA",
+          abi: abi2,
+          functionName: 'addItem',
+          args: [
+            "Macbook M3",
+            "John Doe",
+            1000000000000000000,
+            1000000000000000000,
+            "This is a Macbook M3",
+            BigInt(proof!.merkle_root),
+            BigInt(proof!.nullifier_hash),
+            decodeAbiParameters(
+              parseAbiParameters('uint256[8]'),
+              proof!.proof as `0x${string}`
+            )[0]
+          ],
+        },
+      ],
+    })
+
+    console.log("result", result);
+  }
+
+  
+  const connectWallet2 = async () => {
+    const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
+      nonce: '12344566787',
+      statement: 'Sign in to access the Mini App',
+    });
+  }
+
   return (
     <div className="grid w-full gap-4">
       <p className="text-lg font-semibold">Transaction</p>
@@ -258,6 +311,8 @@ export const Transaction = () => {
         </Button>
 
         <Button onClick={test}>Test</Button>
+        <Button onClick={addMockItem}>Test 2</Button>
+        <Button onClick={connectWallet2}>Connect Wallet 2</Button>
       </LiveFeedback>
     </div>
   );
