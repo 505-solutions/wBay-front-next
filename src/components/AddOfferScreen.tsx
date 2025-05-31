@@ -1,11 +1,22 @@
 'use client';
 import React, { useRef, useState } from 'react';
 
+const categories = [
+  '',
+  'Electronics',
+  'Fashion',
+  'Books',
+  'Home',
+  'Sports',
+  'Other',
+];
+
 export default function AddOfferScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<File | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [category, setCategory] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const receiptInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,93 +42,137 @@ export default function AddOfferScreen() {
     }, 1200);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Add your form submission logic here
+    console.log('Form submitted');
+  };
+
   return (
-    <form className="pb-24 px-4 pt-4 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-blue-700 mb-4">Create New Offer</h2>
-      <p className="text-gray-500 mb-4">List your item for sale</p>
-      {/* Product Image */}
-      <label className="block font-semibold mb-2">Product Image</label>
-      <div
-        className="w-full h-36 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 mb-4 cursor-pointer bg-gray-50"
-        onClick={() => fileInputRef.current?.click()}
-      >
-        {image ? (
-          <img src={image} alt="Product" className="object-cover w-full h-full rounded-xl" />
-        ) : (
-          <>
-            <svg width="40" height="40" fill="none" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" stroke="#2563eb" strokeWidth="2" strokeLinecap="round"/><rect x="3" y="3" width="18" height="18" rx="4" stroke="#2563eb" strokeWidth="2"/></svg>
-            <span className="text-sm mt-2">Tap to add product image</span>
-          </>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageChange}
-        />
-      </div>
-      {/* Product Title */}
-      <label className="block font-semibold mb-1">Product Title</label>
-      <input type="text" placeholder="Enter product title" className="w-full mb-4 rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200" required />
-      {/* Description */}
-      <label className="block font-semibold mb-1">Description</label>
-      <textarea placeholder="Describe your product" className="w-full mb-4 rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200" rows={3} required />
-      {/* Prices */}
-      <div className="flex gap-4 mb-4">
-        <div className="flex-1">
-          <label className="block font-semibold mb-1">Current Price</label>
-          <div className="flex items-center rounded-xl border border-gray-200 px-2">
-            <span className="text-gray-400">$</span>
-            <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full px-2 py-3 bg-transparent focus:outline-none" required />
+    <div className="min-h-screen bg-white pb-24">
+      {/* Sticky header */}
+      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100 flex items-center px-4 py-4 mb-4">
+        <button className="mr-2 p-2 rounded-full hover:bg-gray-100 transition">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+        <h2 className="text-xl font-bold text-gray-900">Add New Offer</h2>
+      </header>
+      <div className="max-w-md mx-auto space-y-4 px-4" onSubmit={handleSubmit}>
+        {/* Product Image */}
+        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
+          <label className="block font-extrabold text-lg mb-3">Product Image</label>
+          <div
+            className="w-full h-40 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 mb-2 cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {image ? (
+              <img src={image} alt="Product" className="object-cover w-full h-full rounded-2xl" />
+            ) : (
+              <>
+                <div className="flex flex-col items-center">
+                  <div className="rounded-full border-2 border-gray-300 bg-white p-2 mb-2">
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/><rect x="3" y="3" width="18" height="18" rx="4" stroke="#6b7280" strokeWidth="2"/></svg>
+                  </div>
+                  <span className="text-base font-medium text-gray-400">Tap to upload image</span>
+                </div>
+              </>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
           </div>
-        </div>
-        <div className="flex-1">
-          <label className="block font-semibold mb-1">Original Price</label>
-          <div className="flex items-center rounded-xl border border-gray-200 px-2">
-            <span className="text-gray-400">$</span>
-            <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full px-2 py-3 bg-transparent focus:outline-none" required />
+        </section>
+        
+        {/* Product Details */}
+        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
+          <label className="block font-extrabold text-lg mb-3">Product Details</label>
+          <div className="mb-3">
+            <label className="block font-bold mb-1">Product Title</label>
+            <input type="text" placeholder="Enter product title" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
           </div>
-        </div>
+          <div className="mb-3">
+            <label className="block font-bold mb-1">Description</label>
+            <textarea placeholder="Describe your product" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" rows={3} required />
+          </div>
+          <div className="mb-3">
+            <label className="block font-bold mb-1">Category</label>
+            <div className="relative">
+              <select
+                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 appearance-none pr-10 text-gray-700"
+                value={category}
+                onChange={e => setCategory(e.target.value)}
+                required
+              >
+                {categories.map(cat => <option key={cat} value={cat} disabled={cat === ''}>{cat === '' ? 'Select category' : cat}</option>)}
+              </select>
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </section>
+        
+        {/* Pricing Information */}
+        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
+          <label className="block font-extrabold text-lg mb-3">Pricing Information</label>
+          <div className="flex gap-4 mb-3">
+            <div className="flex-1">
+              <label className="block font-bold mb-1">Current Price</label>
+              <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
+            </div>
+            <div className="flex-1">
+              <label className="block font-bold mb-1">Original Price</label>
+              <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
+            </div>
+          </div>
+          <div className="mb-0">
+            <label className="block font-bold mb-1">Purchase Date</label>
+            <input type="date" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50" required />
+          </div>
+        </section>
+        
+        {/* Receipt Verification */}
+        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4 mb-4">
+          <label className="block font-extrabold text-lg mb-3">Receipt Verification</label>
+          <div
+            className="w-full rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 mb-4 cursor-pointer bg-gray-50 py-4 hover:bg-gray-100 transition"
+            onClick={() => receiptInputRef.current?.click()}
+          >
+            <div className="rounded-full border-2 border-gray-300 bg-white p-1 mb-2">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="#6b7280" strokeWidth="2"/><path d="M3 7l9 6 9-6" stroke="#6b7280" strokeWidth="2"/></svg>
+            </div>
+            <span className="text-sm font-medium text-gray-400">Upload email receipt (.eml)</span>
+            <input
+              ref={receiptInputRef}
+              type="file"
+              accept=".eml"
+              className="hidden"
+              onChange={handleReceiptChange}
+            />
+            {receipt && <span className="text-xs text-gray-600 mt-1">{receipt.name}</span>}
+          </div>
+          <button
+            type="button"
+            className={`w-full mb-2 py-3 rounded-xl font-bold text-white text-lg shadow-md transition ${verifying ? 'bg-gray-300' : verified ? 'bg-green-500' : 'bg-gradient-to-r from-gray-500 to-gray-700'}`}
+            onClick={handleVerify}
+            disabled={verifying || verified}
+          >
+            {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
+          </button>
+        </section>
+        
+        <button
+          type="submit"
+          className="w-full py-3 rounded-xl text-white font-bold text-lg shadow-md hover:bg-gray-700 transition"
+          onClick={handleSubmit}
+        >
+          Create Offer
+        </button>
       </div>
-      {/* Purchase Date */}
-      <label className="block font-semibold mb-1">Purchase Date</label>
-      <input type="date" className="w-full mb-4 rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200" required />
-      {/* Location */}
-      <label className="block font-semibold mb-1">Location</label>
-      <input type="text" placeholder="Enter your location" className="w-full mb-4 rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200" required />
-      {/* Email Receipt */}
-      <label className="block font-semibold mb-1">Email Receipt (.eml file)</label>
-      <div
-        className="w-full rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 mb-4 cursor-pointer bg-gray-50 py-6"
-        onClick={() => receiptInputRef.current?.click()}
-      >
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#2563eb" strokeWidth="2"/><path d="M3 7l9 6 9-6" stroke="#2563eb" strokeWidth="2"/></svg>
-        <span className="text-sm mt-2">Upload receipt file</span>
-        <input
-          ref={receiptInputRef}
-          type="file"
-          accept=".eml"
-          className="hidden"
-          onChange={handleReceiptChange}
-        />
-        {receipt && <span className="text-xs text-blue-600 mt-1">{receipt.name}</span>}
-      </div>
-      <button
-        type="button"
-        className={`w-full mb-4 py-3 rounded-xl font-bold text-white text-lg shadow-md transition ${verifying ? 'bg-blue-300' : verified ? 'bg-green-500' : 'bg-gradient-to-r from-blue-500 to-blue-700'}`}
-        onClick={handleVerify}
-        disabled={verifying || verified}
-      >
-        {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
-      </button>
-      <button
-        type="submit"
-        className="w-full py-3 rounded-xl bg-gray-200 text-gray-400 font-bold text-lg shadow-md cursor-not-allowed"
-        disabled
-      >
-        Create Offer
-      </button>
-    </form>
+    </div>
   );
-} 
+}

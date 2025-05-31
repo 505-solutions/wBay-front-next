@@ -48,8 +48,8 @@ function ProfileScreen() {
 
   return (
     <div className="p-4 pb-24 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-blue-700 mb-2">Profile</h2>
-      <div className="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Profile</h2>
+      <div className="mb-6 p-4 rounded-xl bg-gray-50 border border-gray-100">
         <div className="font-semibold text-gray-700 mb-1">Location: <span className="font-normal">{user.location}</span></div>
         <div className="font-semibold text-gray-700">Bio: <span className="font-normal">{user.bio}</span></div>
       </div>
@@ -61,13 +61,13 @@ function ProfileScreen() {
               <div className="font-semibold text-gray-900">{p.name}</div>
               <div className="text-gray-400 text-xs">{p.date}</div>
             </div>
-            <div className="text-right min-w-[70px] font-bold text-blue-600">${p.price}</div>
+            <div className="text-right min-w-[70px] font-bold text-gray-600">${p.price}</div>
             <button
-              className="ml-3 p-2 rounded hover:bg-blue-50"
+              className="ml-3 p-2 rounded hover:bg-gray-100"
               onClick={() => setExpandedId(expandedId === p.id ? null : p.id)}
               title="Show Details"
             >
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className={`transition-transform ${expandedId === p.id ? 'rotate-90' : ''}`}><path d="M9 6l6 6-6 6" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className={`transition-transform ${expandedId === p.id ? 'rotate-90' : ''}`}><path d="M9 6l6 6-6 6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             {expandedId === p.id && (
               <div className="absolute left-0 right-0 bg-white rounded-b-xl shadow px-4 pb-4 mt-2">
@@ -87,9 +87,9 @@ function ProfileScreen() {
                 <div className="font-semibold text-gray-900">{o.name}</div>
                 <div className="text-gray-400 text-xs">{o.date}</div>
               </div>
-              <div className="text-right min-w-[70px] font-bold text-blue-600">${o.price}</div>
-              <button className="ml-3 p-2 rounded hover:bg-blue-50" title="Edit Offer" onClick={() => startEdit(o)}>
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-2.172-2.172a2 2 0 0 0-2.828 0l-9.414 9.414A1 1 0 0 0 4 20z" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div className="text-right min-w-[70px] font-bold text-gray-600">${o.price}</div>
+              <button className="ml-3 p-2 rounded hover:bg-gray-100" title="Edit Offer" onClick={() => startEdit(o)}>
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-2.172-2.172a2 2 0 0 0-2.828 0l-9.414 9.414A1 1 0 0 0 4 20z" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
             </div>
             {editId === o.id && (
@@ -107,7 +107,7 @@ function ProfileScreen() {
                   <textarea className="w-full rounded border px-2 py-1" value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} />
                 </div>
                 <div className="flex gap-2">
-                  <button type="button" className="flex-1 py-2 rounded bg-blue-600 text-white font-bold" onClick={saveEdit}>Save</button>
+                  <button type="button" className="flex-1 py-2 rounded bg-gray-900 text-white font-bold" onClick={saveEdit}>Save</button>
                   <button type="button" className="flex-1 py-2 rounded bg-gray-200 text-gray-600 font-bold" onClick={cancelEdit}>Cancel</button>
                   <button type="button" className="flex-1 py-2 rounded bg-red-500 text-white font-bold" onClick={deleteOffer}>Delete</button>
                 </div>

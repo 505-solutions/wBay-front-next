@@ -19,7 +19,7 @@ export default function BrowseOffersScreen() {
 
   return (
     <div className="p-4 pb-24">
-      <h1 className="text-2xl font-bold text-blue-700 mb-4">Browse Offers</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">Browse Offers</h1>
       {loading ? (
         <div className="text-center text-gray-400 py-12">Loading offers...</div>
       ) : offers.length === 0 ? (
@@ -32,7 +32,6 @@ export default function BrowseOffersScreen() {
               offer={offer}
               expanded={expandedOfferId === offer.id}
               onExpand={() => setExpandedOfferId(expandedOfferId === offer.id ? null : offer.id)}
-              onClick={() => setSelectedOffer(offer)}
             />
           ))}
         </div>
