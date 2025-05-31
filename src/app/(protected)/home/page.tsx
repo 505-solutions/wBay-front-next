@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <>
-      <Page.Header className="p-0">
+      {/* <Page.Header className="p-0">
         <TopBar
           title="Home"
           endAdornment={
@@ -31,7 +31,8 @@ export default async function Home() {
         <Pay />
         <Transaction />
         <ViewPermissions />
-      </Page.Main>
+      </Page.Main> */}
+      <h1>Hello World</h1>
     </>
   );
 }
