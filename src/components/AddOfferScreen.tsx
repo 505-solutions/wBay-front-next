@@ -71,8 +71,6 @@ export default function AddOfferScreen() {
 
     const proof = finalPayload as ISuccessResult;
 
-
-
     console.log("address", MiniKit.user.walletAddress);
 
     const result = await MiniKit.commandsAsync.sendTransaction({
@@ -123,163 +121,431 @@ export default function AddOfferScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-24">
-      <button onClick={connectWallet2}>Connect Wallet 2</button>
-      {/* Sticky header */}
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100 flex items-center px-4 py-4 mb-4">
-        <button className="mr-2 p-2 rounded-full hover:bg-gray-100 transition">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        </button>
-        <h2 className="text-xl font-bold text-gray-900">Add New Offer</h2>
+    <div className="add-offer-screen">
+      <header className="header">
+        <h1 className="logo">wBay</h1>
+        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet</button>
       </header>
-      <form className="max-w-md mx-auto space-y-4 px-4" onSubmit={handleSubmit}>
-        {/* Product Image */}
-        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
-          <label className="block font-extrabold text-lg mb-3">Product Image</label>
-          <div
-            className="w-full h-40 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 mb-2 cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {image ? (
-              <img src={image} alt="Product" className="object-cover w-full h-full rounded-2xl" />
-            ) : (
-              <>
-                <div className="flex flex-col items-center">
-                  <div className="rounded-full border-2 border-gray-300 bg-white p-2 mb-2">
-                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/><rect x="3" y="3" width="18" height="18" rx="4" stroke="#6b7280" strokeWidth="2"/></svg>
-                  </div>
-                  <span className="text-base font-medium text-gray-400">Tap to upload image</span>
+
+      <div className="content">
+        
+        <form className="form" onSubmit={handleSubmit}>
+          {/* Product Image */}
+          <section className="form-section">
+            <label className="section-title">Product Image</label>
+            <div className="image-upload" onClick={() => fileInputRef.current?.click()}>
+              {image ? (
+                <img src={image} alt="Product" className="uploaded-image" />
+              ) : (
+                <div className="upload-placeholder">
+                  <div className="upload-icon">📷</div>
+                  <span>Tap to upload image</span>
                 </div>
-              </>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-            />
-          </div>
-        </section>
-        
-        {/* Product Details */}
-        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
-          <label className="block font-extrabold text-lg mb-3">Product Details</label>
-          <div className="mb-3">
-            <label className="block font-bold mb-1">Product Title</label>
-            <input 
-              type="text" 
-              placeholder="Enter product title" 
-              className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
-              required 
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="block font-bold mb-1">Description</label>
-            <textarea 
-              placeholder="Describe your product" 
-              className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
-              rows={3} 
-              required 
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="block font-bold mb-1">Category</label>
-            <div className="relative">
-              <select
-                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 appearance-none pr-10 text-gray-700"
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-                required
-              >
-                {categories.map(cat => <option key={cat} value={cat} disabled={cat === ''}>{cat === '' ? 'Select category' : cat}</option>)}
-              </select>
-              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </span>
-            </div>
-          </div>
-        </section>
-        
-        {/* Pricing Information */}
-        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
-          <label className="block font-extrabold text-lg mb-3">Pricing Information</label>
-          <div className="flex gap-4 mb-3">
-            <div className="flex-1">
-              <label className="block font-bold mb-1">Current Price</label>
-              <input 
-                type="number" 
-                min="0" 
-                step="0.01" 
-                placeholder="0.00" 
-                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
-                required 
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden-input"
+                onChange={handleImageChange}
               />
             </div>
-            <div className="flex-1">
-              <label className="block font-bold mb-1">Original Price</label>
+          </section>
+          
+          {/* Product Details */}
+          <section className="form-section">
+            <label className="section-title">Product Details</label>
+            <div className="input-group">
+              <label className="input-label">Product Title</label>
               <input 
-                type="number" 
-                min="0" 
-                step="0.01" 
-                placeholder="0.00" 
-                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
+                type="text" 
+                placeholder="Enter product title" 
+                className="form-input"
                 required 
-                value={originalPrice}
-                onChange={(e) => setOriginalPrice(Number(e.target.value))}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-          </div>
-          <div className="mb-0">
-            <label className="block font-bold mb-1">Purchase Date</label>
-            <input type="date" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50" required />
-          </div>
-        </section>
-        
-        {/* Receipt Verification */}
-        <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4 mb-4">
-          <label className="block font-extrabold text-lg mb-3">Receipt Verification</label>
-          <div
-            className="w-full rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 mb-4 cursor-pointer bg-gray-50 py-4 hover:bg-gray-100 transition"
-            onClick={() => receiptInputRef.current?.click()}
-          >
-            <div className="rounded-full border-2 border-gray-300 bg-white p-1 mb-2">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="#6b7280" strokeWidth="2"/><path d="M3 7l9 6 9-6" stroke="#6b7280" strokeWidth="2"/></svg>
+            <div className="input-group">
+              <label className="input-label">Description</label>
+              <textarea 
+                placeholder="Describe your product" 
+                className="form-textarea"
+                rows={3} 
+                required 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
-            <span className="text-sm font-medium text-gray-400">Upload email receipt (.eml)</span>
-            <input
-              ref={receiptInputRef}
-              type="file"
-              accept=".eml"
-              className="hidden"
-              onChange={handleReceiptChange}
-            />
-            {receipt && <span className="text-xs text-gray-600 mt-1">{receipt.name}</span>}
-          </div>
-          <button
-            type="button"
-            className={`w-full mb-2 py-3 rounded-xl font-bold text-white text-lg shadow-md transition ${verifying ? 'bg-gray-300' : verified ? 'bg-green-500' : 'bg-gradient-to-r from-gray-500 to-gray-700'}`}
-            onClick={handleVerify}
-            disabled={verifying || verified}
-          >
-            {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
+            <div className="input-group">
+              <label className="input-label">Category</label>
+              <div className="select-wrapper">
+                <select
+                  className="form-select"
+                  value={category}
+                  onChange={e => setCategory(e.target.value)}
+                  required
+                >
+                  {categories.map(cat => <option key={cat} value={cat} disabled={cat === ''}>{cat === '' ? 'Select category' : cat}</option>)}
+                </select>
+                <span className="select-arrow">
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
+              </div>
+            </div>
+          </section>
+          
+          {/* Pricing Information */}
+          <section className="form-section">
+            <label className="section-title">Pricing Information</label>
+            <div className="price-inputs">
+              <div className="input-group">
+                <label className="input-label">Current Price</label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  className="form-input"
+                  required 
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                />
+              </div>
+              <div className="input-group">
+                <label className="input-label">Original Price</label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  className="form-input"
+                  required 
+                  value={originalPrice}
+                  onChange={(e) => setOriginalPrice(Number(e.target.value))}
+                />
+              </div>
+            </div>
+            <div className="input-group">
+              <label className="input-label">Purchase Date</label>
+              <input type="date" className="form-input" required />
+            </div>
+          </section>
+          
+          {/* Receipt Verification */}
+          <section className="form-section">
+            <label className="section-title">Receipt Verification</label>
+            <div className="receipt-upload" onClick={() => receiptInputRef.current?.click()}>
+              <div className="upload-icon">📄</div>
+              <span>Upload email receipt (.eml)</span>
+              <input
+                ref={receiptInputRef}
+                type="file"
+                accept=".eml"
+                className="hidden-input"
+                onChange={handleReceiptChange}
+              />
+              {receipt && <span className="file-name">{receipt.name}</span>}
+            </div>
+            <button
+              type="button"
+              className={`verify-button ${verifying ? 'verifying' : verified ? 'verified' : ''}`}
+              onClick={handleVerify}
+              disabled={verifying || verified}
+            >
+              {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
+            </button>
+          </section>
+          
+          <button type="submit" className="submit-button" onClick={handleSubmit}>
+            Create Offer
           </button>
-        </section>
-        
-        <button
-          type="submit"
-          className="w-full py-3 rounded-xl text-white font-bold text-lg shadow-md hover:bg-gray-700 transition"
-          onClick={handleSubmit}
-        >
-          Create Offer
-        </button>
-      </form>
+        </form>
+      </div>
+
+      <style jsx>{`
+        .add-offer-screen {
+          min-height: 100vh;
+          background: #ffffff;
+        }
+
+        .header {
+          padding: 20px 24px; /* Reduced padding for a shorter header */
+          background: #ffffff;
+          border-bottom: 1px solid #f1f5f9;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .logo {
+          font-size: 24px;
+          font-weight: 300;
+          letter-spacing: -0.5px;
+          color: #2d3748;
+          margin: 0;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          color: #718096;
+          font-weight: 400;
+          margin: 8px 0 0 0;
+        }
+
+        .content {
+          padding: 32px 24px 100px;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .connect-wallet-btn {
+          background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 16px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
+        }
+
+        .connect-wallet-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+        }
+
+        .form {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .form-section {
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 20px;
+          padding: 24px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #2d3748;
+          margin-bottom: 16px;
+          display: block;
+        }
+
+        .input-group {
+          margin-bottom: 16px;
+        }
+
+        .input-group:last-child {
+          margin-bottom: 0;
+        }
+
+        .input-label {
+          font-size: 14px;
+          font-weight: 500;
+          color: #4a5568;
+          margin-bottom: 8px;
+          display: block;
+        }
+
+        .form-input, .form-textarea, .form-select {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 15px;
+          background: #f7fafc;
+          color: #2d3748;
+          transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+          outline: none;
+          border-color: #4299e1;
+          box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+          background: white;
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 80px;
+        }
+
+        .select-wrapper {
+          position: relative;
+        }
+
+        .form-select {
+          appearance: none;
+          padding-right: 40px;
+        }
+
+        .select-arrow {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          pointer-events: none;
+        }
+
+        .price-inputs {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+
+        .price-inputs .input-group {
+          flex: 1;
+          margin-bottom: 0;
+        }
+
+        .image-upload, .receipt-upload {
+          border: 2px dashed #cbd5e0;
+          border-radius: 16px;
+          padding: 10px 10px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background: #f7fafc;
+        }
+
+        .image-upload:hover, .receipt-upload:hover {
+          border-color: #4299e1;
+          background: #edf2f7;
+        }
+
+        .image-upload {
+          height: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+        }
+
+        .receipt-upload {
+          margin-bottom: 16px;
+        }
+
+        .upload-placeholder {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .upload-icon {
+          font-size: 32px;
+          margin-bottom: 8px;
+        }
+
+        .upload-placeholder span {
+          color: #718096;
+          font-weight: 500;
+        }
+
+        .uploaded-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 12px;
+        }
+
+        .file-name {
+          font-size: 12px;
+          color: #4a5568;
+          margin-top: 8px;
+          display: block;
+        }
+
+        .hidden-input {
+          display: none;
+        }
+
+        .verify-button {
+          width: 100%;
+          padding: 12px 24px;
+          border: none;
+          border-radius: 16px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+          color: white;
+          box-shadow: 0 4px 16px rgba(160, 174, 192, 0.3);
+        }
+
+        .verify-button.verifying {
+          background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+          cursor: not-allowed;
+          animation: pulse 1.5s infinite;
+        }
+
+        .verify-button.verified {
+          background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+          box-shadow: 0 4px 16px rgba(72, 187, 120, 0.3);
+        }
+
+        .verify-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(160, 174, 192, 0.4);
+        }
+
+        .submit-button {
+          background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+          color: white;
+          border: none;
+          padding: 16px 24px;
+          border-radius: 16px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
+          margin-top: 8px;
+        }
+
+        .submit-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .content {
+            padding: 24px 16px 100px;
+          }
+          
+          .header {
+            padding: 20px 16px;
+          }
+
+          .price-inputs {
+            flex-direction: column;
+            gap: 0;
+          }
+
+          .price-inputs .input-group {
+            margin-bottom: 16px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

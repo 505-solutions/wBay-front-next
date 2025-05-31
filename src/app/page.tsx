@@ -4,16 +4,91 @@ import MobileLayout from '@/components/MobileLayout';
 import BrowseOffersScreen from '@/components/BrowseOffersScreen';
 import BottomNav from '@/components/BottomNav';
 import AddOfferScreen from '@/components/AddOfferScreen';
-
-function AddOfferScreenPlaceholder() {
-  return (
-    <div className="p-4 pb-24">Add Offer Screen (form coming soon)</div>
-  );
-}
+import { MiniKit } from '@worldcoin/minikit-js';
 
 function PurchasesScreen() {
   return (
-    <div className="p-4 pb-24">Purchases Screen (list coming soon)</div>
+    <div className="purchases-screen">
+      <header className="header">
+        <h1 className="logo">wBay</h1>
+        <p className="subtitle">Your Purchases</p>
+      </header>
+
+      <div className="content">
+        <div className="empty-state">
+          <div className="empty-icon">🛍️</div>
+          <p>No purchases yet</p>
+          <span className="empty-subtitle">Start browsing to make your first purchase</span>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .purchases-screen {
+          min-height: 100vh;
+          background: #ffffff;
+        }
+
+        .header {
+          padding: 60px 24px 40px;
+          text-align: center;
+          background: #ffffff;
+          border-bottom: 1px solid #f1f5f9;
+        }
+
+        .logo {
+          font-size: 32px;
+          font-weight: 300;
+          letter-spacing: -0.5px;
+          color: #2d3748;
+          margin-bottom: 8px;
+          margin: 0;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          color: #718096;
+          font-weight: 400;
+          margin: 8px 0 0 0;
+        }
+
+        .content {
+          padding: 32px 24px 100px;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 80px 20px;
+          text-align: center;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 20px;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .empty-icon {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+
+        .empty-state p {
+          color: #2d3748;
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 8px;
+        }
+
+        .empty-subtitle {
+          color: #718096;
+          font-size: 14px;
+        }
+      `}</style>
+    </div>
   );
 }
 
@@ -46,76 +121,402 @@ function ProfileScreen() {
     setEditId(null);
   };
 
+  const connectWallet2 = async () => {
+    const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
+      nonce: '12344566787',
+      statement: 'Sign in to access the Mini App',
+    });
+  }
+
   return (
-    <div className="p-4 pb-24 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Profile</h2>
-      <div className="mb-6 p-4 rounded-xl bg-gray-50 border border-gray-100">
-        <div className="font-semibold text-gray-700 mb-1">Location: <span className="font-normal">{user.location}</span></div>
-        <div className="font-semibold text-gray-700">Bio: <span className="font-normal">{user.bio}</span></div>
-      </div>
-      <h3 className="text-lg font-bold mb-2">Purchases</h3>
-      <div className="space-y-2 mb-6">
-        {purchases.map(p => (
-          <div key={p.id} className="bg-white rounded-xl shadow border border-gray-100 flex items-center px-4 py-3">
-            <div className="flex-1">
-              <div className="font-semibold text-gray-900">{p.name}</div>
-              <div className="text-gray-400 text-xs">{p.date}</div>
-            </div>
-            <div className="text-right min-w-[70px] font-bold text-gray-600">${p.price}</div>
-            <button
-              className="ml-3 p-2 rounded hover:bg-gray-100"
-              onClick={() => setExpandedId(expandedId === p.id ? null : p.id)}
-              title="Show Details"
-            >
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className={`transition-transform ${expandedId === p.id ? 'rotate-90' : ''}`}><path d="M9 6l6 6-6 6" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            {expandedId === p.id && (
-              <div className="absolute left-0 right-0 bg-white rounded-b-xl shadow px-4 pb-4 mt-2">
-                {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-32 object-cover rounded mb-2" />}
-                <div className="text-gray-700 text-sm mb-2">{p.description}</div>
+    <div className="profile-screen">
+      <header className="header">
+        <h1 className="logo">wBay</h1>
+        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet</button>
+      </header>
+
+      <div className="content">
+        {/* Purchases Section */}
+        <section className="profile-section">
+          <h3 className="section-title">Recent Purchases</h3>
+          <div className="items-list">
+            {purchases.map(p => (
+              <div key={p.id} className="item-card">
+                <div className="item-header">
+                  <div className="item-info">
+                    <div className="item-name">{p.name}</div>
+                    <div className="item-date">{p.date}</div>
+                  </div>
+                  <div className="item-price">${p.price}</div>
+                  <button
+                    className="expand-button"
+                    onClick={() => setExpandedId(expandedId === p.id ? null : p.id)}
+                  >
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className={`expand-icon ${expandedId === p.id ? 'expanded' : ''}`}>
+                      <path d="M6 9l6 6 6-6" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                {expandedId === p.id && (
+                  <div className="item-details">
+                    {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="item-image" />}
+                    <div className="item-description">{p.description}</div>
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ))}
-      </div>
-      <h3 className="text-lg font-bold mb-2">My Offers</h3>
-      <div className="space-y-2">
-        {myOffers.map(o => (
-          <div key={o.id} className="bg-white rounded-xl shadow border border-gray-100">
-            <div className="flex items-center px-4 py-3">
-              <div className="flex-1">
-                <div className="font-semibold text-gray-900">{o.name}</div>
-                <div className="text-gray-400 text-xs">{o.date}</div>
+        </section>
+
+        {/* My Offers Section */}
+        <section className="profile-section">
+          <h3 className="section-title">My Offers</h3>
+          <div className="items-list">
+            {myOffers.map(o => (
+              <div key={o.id} className="item-card">
+                <div className="item-header">
+                  <div className="item-info">
+                    <div className="item-name">{o.name}</div>
+                    <div className="item-date">{o.date}</div>
+                  </div>
+                  <div className="item-price">${o.price}</div>
+                  <button className="edit-button" onClick={() => startEdit(o)}>
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                      <path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-2.172-2.172a2 2 0 0 0-2.828 0l-9.414 9.414A1 1 0 0 0 4 20z" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                {editId === o.id && (
+                  <div className="edit-form">
+                    <div className="form-group">
+                      <label className="form-label">Product Name</label>
+                      <input 
+                        className="form-input" 
+                        value={editForm.name} 
+                        onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} 
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Price</label>
+                      <input 
+                        type="number" 
+                        className="form-input" 
+                        value={editForm.price} 
+                        onChange={e => setEditForm(f => ({ ...f, price: Number(e.target.value) }))} 
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Description</label>
+                      <textarea 
+                        className="form-textarea" 
+                        value={editForm.description} 
+                        onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} 
+                      />
+                    </div>
+                    <div className="form-actions">
+                      <button className="save-button" onClick={saveEdit}>Save</button>
+                      <button className="cancel-button" onClick={cancelEdit}>Cancel</button>
+                      <button className="delete-button" onClick={deleteOffer}>Delete</button>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="text-right min-w-[70px] font-bold text-gray-600">${o.price}</div>
-              <button className="ml-3 p-2 rounded hover:bg-gray-100" title="Edit Offer" onClick={() => startEdit(o)}>
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-2.172-2.172a2 2 0 0 0-2.828 0l-9.414 9.414A1 1 0 0 0 4 20z" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-            </div>
-            {editId === o.id && (
-              <div className="px-4 pb-4">
-                <div className="mb-2">
-                  <label className="block text-xs font-semibold mb-1">Product Name</label>
-                  <input className="w-full rounded border px-2 py-1" value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-xs font-semibold mb-1">Price</label>
-                  <input type="number" className="w-full rounded border px-2 py-1" value={editForm.price} onChange={e => setEditForm(f => ({ ...f, price: Number(e.target.value) }))} />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-xs font-semibold mb-1">Description</label>
-                  <textarea className="w-full rounded border px-2 py-1" value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} />
-                </div>
-                <div className="flex gap-2">
-                  <button type="button" className="flex-1 py-2 rounded bg-gray-900 text-white font-bold" onClick={saveEdit}>Save</button>
-                  <button type="button" className="flex-1 py-2 rounded bg-gray-200 text-gray-600 font-bold" onClick={cancelEdit}>Cancel</button>
-                  <button type="button" className="flex-1 py-2 rounded bg-red-500 text-white font-bold" onClick={deleteOffer}>Delete</button>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
-        ))}
+        </section>
       </div>
+
+      <style jsx>{`
+        .profile-screen {
+          min-height: 100vh;
+          background: #ffffff;
+        }
+
+        .header {
+          padding: 20px 24px; /* Reduced padding for a shorter header */
+          text-align: center;
+          background: #ffffff;
+          border-bottom: 1px solid #f1f5f9;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .logo {
+          font-size: 24px; /* Reduced font size for a shorter header */
+          font-weight: 300;
+          letter-spacing: -0.5px;
+          color: #2d3748;
+          margin-bottom: 8px;
+          margin: 0;
+        }
+
+        .connect-wallet-btn {
+          background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 16px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
+        }
+
+        .connect-wallet-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+        }
+
+        .subtitle {
+          font-size: 14px;
+          color: #718096;
+          font-weight: 400;
+          margin: 8px 0 0 0;
+        }
+
+        .content {
+          padding: 32px 24px 100px;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .profile-section {
+          margin-bottom: 32px;
+        }
+
+        .section-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #2d3748;
+          margin-bottom: 16px;
+        }
+
+        .info-card {
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 20px;
+          padding: 20px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+        }
+
+        .info-item {
+          display: flex;
+          margin-bottom: 12px;
+        }
+
+        .info-item:last-child {
+          margin-bottom: 0;
+        }
+
+        .info-label {
+          font-weight: 600;
+          color: #4a5568;
+          margin-right: 8px;
+        }
+
+        .info-value {
+          color: #2d3748;
+        }
+
+        .items-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .item-card {
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .item-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .item-header {
+          display: flex;
+          align-items: center;
+          padding: 16px 20px;
+        }
+
+        .item-info {
+          flex: 1;
+        }
+
+        .item-name {
+          font-weight: 600;
+          color: #2d3748;
+          font-size: 15px;
+        }
+
+        .item-date {
+          color: #718096;
+          font-size: 12px;
+          margin-top: 2px;
+        }
+
+        .item-price {
+          font-weight: 700;
+          color: #2d3748;
+          font-size: 16px;
+          margin-right: 12px;
+        }
+
+        .expand-button, .edit-button {
+          background: none;
+          border: none;
+          padding: 8px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        .expand-button:hover, .edit-button:hover {
+          background: #f7fafc;
+        }
+
+        .expand-icon {
+          transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+          transform: rotate(180deg);
+        }
+
+        .item-details {
+          padding: 0 20px 20px;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .item-image {
+          width: 100%;
+          height: 120px;
+          object-fit: cover;
+          border-radius: 12px;
+          margin-bottom: 12px;
+        }
+
+        .item-description {
+          color: #4a5568;
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .edit-form {
+          padding: 20px;
+          border-top: 1px solid #f1f5f9;
+          background: #f7fafc;
+        }
+
+        .form-group {
+          margin-bottom: 16px;
+        }
+
+        .form-group:last-of-type {
+          margin-bottom: 20px;
+        }
+
+        .form-label {
+          display: block;
+          font-size: 12px;
+          font-weight: 600;
+          color: #4a5568;
+          margin-bottom: 6px;
+        }
+
+        .form-input, .form-textarea {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 14px;
+          background: white;
+          color: #2d3748;
+          transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+          outline: none;
+          border-color: #4299e1;
+          box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 60px;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .save-button, .cancel-button, .delete-button {
+          flex: 1;
+          padding: 10px 16px;
+          border: none;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .save-button {
+          background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+          color: white;
+          box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
+        }
+
+        .save-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+        }
+
+        .cancel-button {
+          background: #e2e8f0;
+          color: #4a5568;
+        }
+
+        .cancel-button:hover {
+          background: #cbd5e0;
+        }
+
+        .delete-button {
+          background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+          color: white;
+          box-shadow: 0 4px 16px rgba(245, 101, 101, 0.3);
+        }
+
+        .delete-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(245, 101, 101, 0.4);
+        }
+
+        @media (max-width: 768px) {
+          .content {
+            padding: 24px 16px 100px;
+          }
+          
+          .header {
+            padding: 50px 16px 32px;
+          }
+
+          .form-actions {
+            flex-direction: column;
+            gap: 12px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

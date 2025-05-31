@@ -31,7 +31,6 @@ export default function OfferDetailsContent({
       </div>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-gray-400 line-through">${offer.originalPrice}</span>
-        <span className="text-green-600 font-semibold">{offer.discount}% off</span>
       </div>
       <div className="flex items-center gap-2 mb-4">
         <span className="flex items-center gap-1 text-yellow-500 font-medium">

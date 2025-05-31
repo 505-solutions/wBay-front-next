@@ -4,14 +4,13 @@ import ItemManager from '@/components/Transaction/ItemManager.json';
 
 export interface Offer {
   id: string;
+  seller: string;
   title: string;
   description: string;
   imageUrl: string;
   price: number;
   originalPrice: number;
-  location: string;
-  rating: number;
-  discount: number;
+  // location: string;
 }
 
 export async function fetchOffers(): Promise<Offer[]> {
@@ -58,14 +57,13 @@ export async function fetchOffers(): Promise<Offer[]> {
         offers.push({
           id: i.toString(),
           // id: item.id.toString() || '',
+          seller: item[1] || '',
           title: item[0] || '',
-          description: item[1] || '',
+          description: item[4] || '',
           imageUrl: '',
-          price: Number(item[3]) / 1000000000000000000,
-          originalPrice: Number(item[4] || item[3]) / 1000000000000000000,
-          location: item[5] || '',
-          rating: Number(item[6] || 0),
-          discount: Number(item[7] || 0)
+          price: Number(item[2]) / 1000000000000000000,
+          originalPrice: Number(item[2] || item[3]) / 1000000000000000000,
+          // location: item[5] || '',
         });
       }
 
