@@ -42,7 +42,7 @@ export async function fetchOffers(): Promise<Offer[]> {
       
       // Fetch each item
       for (let i = 0; i < Number(numberOfItems); i++) {
-        await new Promise((r) => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 300));
 
         const item = await client.readContract({
           ...contract,

@@ -1,5 +1,9 @@
 'use client';
+import { ISuccessResult, MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import React, { useRef, useState } from 'react';
+import { parseAbiParameters } from 'viem';
+import { decodeAbiParameters } from 'viem';
+import abi2 from './Transaction/ItemManager.json';
 
 const categories = [
   '',
@@ -17,6 +21,10 @@ export default function AddOfferScreen() {
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const [category, setCategory] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState<number>(0);
+  const [originalPrice, setOriginalPrice] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const receiptInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,6 +42,13 @@ export default function AddOfferScreen() {
     if (file) setReceipt(file);
   };
 
+  const connectWallet2 = async () => {
+    const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
+      nonce: '12344566787',
+      statement: 'Sign in to access the Mini App',
+    });
+  }
+
   const handleVerify = async () => {
     setVerifying(true);
     setTimeout(() => {
@@ -42,14 +57,74 @@ export default function AddOfferScreen() {
     }, 1200);
   };
 
+  const addMockItem = async (title: string, description: string, category: string, timestamp: number, price: number, originalPrice: number, author: string) => {
+    const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
+      nonce: '12344566787',
+      statement: 'Sign in to access the Mini App',
+    });
+   
+    const { finalPayload } = await MiniKit.commandsAsync.verify({
+      action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
+      verification_level: VerificationLevel.Orb,
+      signal: MiniKit.user.walletAddress,
+    });
+
+    const proof = finalPayload as ISuccessResult;
+
+
+
+    console.log("address", MiniKit.user.walletAddress);
+
+    const result = await MiniKit.commandsAsync.sendTransaction({
+      transaction: [
+        {
+          address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+          abi: abi2,
+          functionName: 'addItem',
+          args: [
+            title,
+            author,
+            BigInt(originalPrice * 1000000000000000000),
+            BigInt(price * 1000000000000000000),
+            description,
+            BigInt(proof!.merkle_root),
+            BigInt(proof!.nullifier_hash),
+            decodeAbiParameters(
+              parseAbiParameters('uint256[8]'),
+              proof!.proof as `0x${string}`
+            )[0]
+          ],
+        },
+      ],
+    })
+
+    console.log("result", result);
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Get all form data
+    const formData = {
+      title,
+      description,
+      category,
+      image,
+      receipt,
+      verified,
+      price,
+      originalPrice
+    };
+
+    console.log("formData", formData);
     // TODO: Add your form submission logic here
-    console.log('Form submitted');
+
+    await addMockItem(title, description, category, 0, price, originalPrice, MiniKit.user.walletAddress || '');
   };
 
   return (
     <div className="min-h-screen bg-white pb-24">
+      <button onClick={connectWallet2}>Connect Wallet 2</button>
       {/* Sticky header */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100 flex items-center px-4 py-4 mb-4">
         <button className="mr-2 p-2 rounded-full hover:bg-gray-100 transition">
@@ -57,7 +132,7 @@ export default function AddOfferScreen() {
         </button>
         <h2 className="text-xl font-bold text-gray-900">Add New Offer</h2>
       </header>
-      <div className="max-w-md mx-auto space-y-4 px-4" onSubmit={handleSubmit}>
+      <form className="max-w-md mx-auto space-y-4 px-4" onSubmit={handleSubmit}>
         {/* Product Image */}
         <section className="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
           <label className="block font-extrabold text-lg mb-3">Product Image</label>
@@ -92,11 +167,25 @@ export default function AddOfferScreen() {
           <label className="block font-extrabold text-lg mb-3">Product Details</label>
           <div className="mb-3">
             <label className="block font-bold mb-1">Product Title</label>
-            <input type="text" placeholder="Enter product title" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
+            <input 
+              type="text" 
+              placeholder="Enter product title" 
+              className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
+              required 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
           <div className="mb-3">
             <label className="block font-bold mb-1">Description</label>
-            <textarea placeholder="Describe your product" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" rows={3} required />
+            <textarea 
+              placeholder="Describe your product" 
+              className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
+              rows={3} 
+              required 
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </div>
           <div className="mb-3">
             <label className="block font-bold mb-1">Category</label>
@@ -122,11 +211,29 @@ export default function AddOfferScreen() {
           <div className="flex gap-4 mb-3">
             <div className="flex-1">
               <label className="block font-bold mb-1">Current Price</label>
-              <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
+              <input 
+                type="number" 
+                min="0" 
+                step="0.01" 
+                placeholder="0.00" 
+                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
+                required 
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
+              />
             </div>
             <div className="flex-1">
               <label className="block font-bold mb-1">Original Price</label>
-              <input type="number" min="0" step="0.01" placeholder="0.00" className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" required />
+              <input 
+                type="number" 
+                min="0" 
+                step="0.01" 
+                placeholder="0.00" 
+                className="w-full rounded-xl border border-gray-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-gray-50 placeholder:text-gray-300" 
+                required 
+                value={originalPrice}
+                onChange={(e) => setOriginalPrice(Number(e.target.value))}
+              />
             </div>
           </div>
           <div className="mb-0">
@@ -172,7 +279,7 @@ export default function AddOfferScreen() {
         >
           Create Offer
         </button>
-      </div>
+      </form>
     </div>
   );
 }
