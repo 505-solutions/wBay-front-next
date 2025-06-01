@@ -33,6 +33,7 @@ export default function AddOfferScreen() {
   const [, setImageUrl] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [verifyTransaction, setVerifyTransaction] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,11 +57,18 @@ export default function AddOfferScreen() {
   }
 
   const handleVerify = async () => {
-    setVerifying(true);
-    setTimeout(() => {
-      setVerifying(false);
-      setVerified(true);
-    }, 1200);
+    const response = await fetch('/api/eml');
+    const data = await response.json();
+    
+    console.log("DATA", data);
+    console.log("TRANSACTION HASH", data.message);
+
+    setVerifyTransaction(data.message)
+    // setVerifying(true);
+    // setTimeout(() => {
+    //   setVerifying(false);
+    //   setVerified(true);
+    // }, 1200);
   };
 
   const addItem = async (title: string, description: string, category: string, timestamp: number, price: number, originalPrice: number, author: string) => {
@@ -166,11 +174,18 @@ export default function AddOfferScreen() {
     }
   };
 
+  const testEml = async () => {
+    const response = await fetch('/api/eml');
+    const data = await response.json();
+    console.log("data", data);
+  }
+
   return (
     <div className="add-offer-screen">
       <header className="header">
         <h1 className="logo">wBay</h1>
-        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet</button>
+        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet: {MiniKit.user.walletAddress}</button>
+        <button onClick={testEml} className="connect-wallet-btn">Test EML</button>
       </header>
 
       <div className="content">
@@ -298,10 +313,24 @@ export default function AddOfferScreen() {
               type="button"
               className={`verify-button ${verifying ? 'verifying' : verified ? 'verified' : ''}`}
               onClick={handleVerify}
-              disabled={verifying || verified}
             >
               {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
             </button>
+            {verifyTransaction && (
+              <div className="verify-transaction">
+                <span style={{ color: 'black' }}>
+                  Transaction Hash:{' '}
+                  <a 
+                    href={`https://sepolia-optimism.etherscan.io/tx/${verifyTransaction}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ wordBreak: 'break-all' }}
+                  >
+                    {verifyTransaction}
+                  </a>
+                </span>
+              </div>
+            )}
           </section>
 
           {showSuccess && (
