@@ -74,8 +74,6 @@ export default function OfferCard({
           imageId={offer?.seller + "-" + offer?.title}
           className="product-image"
         />
-
-        <p>Success: {success.toString()}</p>
       {/* Card content */}
       <div className="card-content">
         <div className="card-header">
