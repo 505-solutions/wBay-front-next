@@ -7,10 +7,12 @@ export default function OfferCard({
   offer = undefined,
   expanded = false,
   onExpand,
+  onBuy,
 }: {
   offer?: any;
   expanded?: boolean;
   onExpand?: () => void;
+  onBuy: () => void;
 }) {
   const [buying, setBuying] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -18,7 +20,7 @@ export default function OfferCard({
   const handleBuy = async () => {
     setBuying(true);
     // setSuccess(false);
-    
+
     const payload: PayCommandInput = {
       reference: "1234567890",
       to: '0x4c44a6a5af7206b27d37d49e896b67a086e80042', // Test address
@@ -42,11 +44,12 @@ export default function OfferCard({
     const { finalPayload } = await MiniKit.commandsAsync.pay(payload)
 
     console.log("finalPayload", finalPayload);
-  
+
     // await new Promise((r) => setTimeout(r, 1200));
     setBuying(false);
     setSuccess(true);
-    // setTimeout(() => setSuccess(false), 2000);
+    setTimeout(() => setSuccess(false), 2000);
+    onBuy();
   };
 
   return (

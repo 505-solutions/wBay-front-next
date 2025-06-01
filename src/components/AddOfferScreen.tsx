@@ -65,49 +65,49 @@ export default function AddOfferScreen() {
 
   const addItem = async (title: string, description: string, category: string, timestamp: number, price: number, originalPrice: number, author: string) => {
     // TODO: Implement this
-    const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
-      nonce: '12344566787',
-      statement: 'Sign in to access the Mini App',
-    });
+    // const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
+    //   nonce: '12344566787',
+    //   statement: 'Sign in to access the Mini App',
+    // });
    
-    const { finalPayload } = await MiniKit.commandsAsync.verify({
-      action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
-      verification_level: VerificationLevel.Orb,
-      signal: MiniKit.user.walletAddress,
-    });
+    // const { finalPayload } = await MiniKit.commandsAsync.verify({
+    //   action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
+    //   verification_level: VerificationLevel.Orb,
+    //   signal: MiniKit.user.walletAddress,
+    // });
 
-    const proof = finalPayload as ISuccessResult;
-    console.log("proof", proof);
-    console.log("proof.merkle_root", proof.merkle_root);
-    console.log("proof.nullifier_hash", proof.nullifier_hash);
-    console.log("proof.proof", proof.proof);
+    // const proof = finalPayload as ISuccessResult;
+    // console.log("proof", proof);
+    // console.log("proof.merkle_root", proof.merkle_root);
+    // console.log("proof.nullifier_hash", proof.nullifier_hash);
+    // console.log("proof.proof", proof.proof);
 
-    console.log("address", MiniKit.user.walletAddress);
+    // console.log("address", MiniKit.user.walletAddress);
 
-    const result = await MiniKit.commandsAsync.sendTransaction({
-      transaction: [
-        {
-          address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
-          abi: abi2,
-          functionName: 'addItem',
-          args: [
-            title,
-            author,
-            BigInt(originalPrice * 1000000000000000000),
-            BigInt(price * 1000000000000000000),
-            description,
-            BigInt(proof!.merkle_root),
-            BigInt(proof!.nullifier_hash),
-            decodeAbiParameters(
-              parseAbiParameters('uint256[8]'),
-              proof!.proof as `0x${string}`
-            )[0]
-          ],
-        },
-      ],
-    })
+    // const result = await MiniKit.commandsAsync.sendTransaction({
+    //   transaction: [
+    //     {
+    //       address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+    //       abi: abi2,
+    //       functionName: 'addItem',
+    //       args: [
+    //         title,
+    //         author,
+    //         BigInt(originalPrice * 1000000000000000000),
+    //         BigInt(price * 1000000000000000000),
+    //         description,
+    //         BigInt(proof!.merkle_root),
+    //         BigInt(proof!.nullifier_hash),
+    //         decodeAbiParameters(
+    //           parseAbiParameters('uint256[8]'),
+    //           proof!.proof as `0x${string}`
+    //         )[0]
+    //       ],
+    //     },
+    //   ],
+    // })
 
-    console.log("result", result);
+    // console.log("result", result);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,8 +128,8 @@ export default function AddOfferScreen() {
 
     try {
       const file = fileInputRef.current.files[0];
-      const author = MiniKit.user.walletAddress || 'blablabla';
-      const imageId = `${author}-${title}`;
+      const author = MiniKit.user.walletAddress || '0x0f6652c713a946A80E519793B339A3Bc897730c3';
+      const imageId = `${author}-${title}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 
       console.log("imageId", imageId);
 

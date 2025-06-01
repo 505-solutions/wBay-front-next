@@ -45,6 +45,9 @@ export default function BrowseOffersScreen() {
                 offer={offer}
                 expanded={expandedOfferId === offer.id}
                 onExpand={() => setExpandedOfferId(expandedOfferId === offer.id ? null : offer.id)}
+                onBuy={() => {
+                  setOffers(offers.filter((o) => o.id !== offer.id));
+                }}
               />
             ))}
             <div className="pb-24"></div> {/* Added padding after the last item */}
