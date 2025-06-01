@@ -29,7 +29,7 @@ function PurchasesScreen() {
         }
 
         .header {
-          padding: 60px 24px 40px;
+          padding: 20px 24px; /* Reduced padding for a shorter header */
           text-align: center;
           background: #ffffff;
           border-bottom: 1px solid #f1f5f9;
@@ -153,7 +153,7 @@ function ProfileScreen() {
                     onClick={() => setExpandedId(expandedId === p.id ? null : p.id)}
                   >
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" className={`expand-icon ${expandedId === p.id ? 'expanded' : ''}`}>
-                      <path d="M6 9l6 6 6-6" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6 9l6 6 6-6" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                 </div>
@@ -181,8 +181,16 @@ function ProfileScreen() {
                   </div>
                   <div className="item-price">${o.price}</div>
                   <button className="edit-button" onClick={() => startEdit(o)}>
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-2.172-2.172a2 2 0 0 0-2.828 0l-9.414 9.414A1 1 0 0 0 4 20z" stroke="#718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M15 5l4 4-12 12H3v-4L15 5z"
+                        fill="#4A5568" />
+
+                      <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L20 7l-3-3 1.5-1.5z"
+                        fill="#4A5568" />
+
+                      <path d="M15 5l4 4"
+                        stroke="#4A5568"
+                        stroke-width="0.5" />
                     </svg>
                   </button>
                 </div>
@@ -190,27 +198,27 @@ function ProfileScreen() {
                   <div className="edit-form">
                     <div className="form-group">
                       <label className="form-label">Product Name</label>
-                      <input 
-                        className="form-input" 
-                        value={editForm.name} 
-                        onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} 
+                      <input
+                        className="form-input"
+                        value={editForm.name}
+                        onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
                       />
                     </div>
                     <div className="form-group">
                       <label className="form-label">Price</label>
-                      <input 
-                        type="number" 
-                        className="form-input" 
-                        value={editForm.price} 
-                        onChange={e => setEditForm(f => ({ ...f, price: Number(e.target.value) }))} 
+                      <input
+                        type="number"
+                        className="form-input"
+                        value={editForm.price}
+                        onChange={e => setEditForm(f => ({ ...f, price: Number(e.target.value) }))}
                       />
                     </div>
                     <div className="form-group">
                       <label className="form-label">Description</label>
-                      <textarea 
-                        className="form-textarea" 
-                        value={editForm.description} 
-                        onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} 
+                      <textarea
+                        className="form-textarea"
+                        value={editForm.description}
+                        onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
                       />
                     </div>
                     <div className="form-actions">

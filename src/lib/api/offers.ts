@@ -53,6 +53,8 @@ export async function fetchOffers(): Promise<Offer[]> {
         // Note: Adjust field mapping based on actual contract structure
 
         console.log("item", item);
+        const imageId = item[1] + "-" + item[0];
+        console.log("imageId", imageId);
 
         offers.push({
           id: i.toString(),

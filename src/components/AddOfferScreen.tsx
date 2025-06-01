@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import { parseAbiParameters } from 'viem';
 import { decodeAbiParameters } from 'viem';
 import abi2 from './Transaction/ItemManager.json';
+import { useRouter } from 'next/navigation';
 
 const categories = [
   '',
@@ -16,6 +17,7 @@ const categories = [
 ];
 
 export default function AddOfferScreen() {
+  const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<File | null>(null);
   const [verifying, setVerifying] = useState(false);
@@ -23,10 +25,14 @@ export default function AddOfferScreen() {
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [price, setPrice] = useState<number>(0);
-  const [originalPrice, setOriginalPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number>();
+  const [originalPrice, setOriginalPrice] = useState<number>();
+  const [purchaseDate, setPurchaseDate] = useState<string>('12/12/2024');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const receiptInputRef = useRef<HTMLInputElement>(null);
+  const [, setImageUrl] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,67 +63,102 @@ export default function AddOfferScreen() {
     }, 1200);
   };
 
-  const addMockItem = async (title: string, description: string, category: string, timestamp: number, price: number, originalPrice: number, author: string) => {
-    const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
-      nonce: '12344566787',
-      statement: 'Sign in to access the Mini App',
-    });
+  const addItem = async (title: string, description: string, category: string, timestamp: number, price: number, originalPrice: number, author: string) => {
+    // TODO: Implement this
+    // const { finalPayload: authPayload } = await MiniKit.commandsAsync.walletAuth({
+    //   nonce: '12344566787',
+    //   statement: 'Sign in to access the Mini App',
+    // });
    
-    const { finalPayload } = await MiniKit.commandsAsync.verify({
-      action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
-      verification_level: VerificationLevel.Orb,
-      signal: MiniKit.user.walletAddress,
-    });
+    // const { finalPayload } = await MiniKit.commandsAsync.verify({
+    //   action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
+    //   verification_level: VerificationLevel.Orb,
+    //   signal: MiniKit.user.walletAddress,
+    // });
 
-    const proof = finalPayload as ISuccessResult;
+    // const proof = finalPayload as ISuccessResult;
 
-    console.log("address", MiniKit.user.walletAddress);
+    // console.log("address", MiniKit.user.walletAddress);
 
-    const result = await MiniKit.commandsAsync.sendTransaction({
-      transaction: [
-        {
-          address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
-          abi: abi2,
-          functionName: 'addItem',
-          args: [
-            title,
-            author,
-            BigInt(originalPrice * 1000000000000000000),
-            BigInt(price * 1000000000000000000),
-            description,
-            BigInt(proof!.merkle_root),
-            BigInt(proof!.nullifier_hash),
-            decodeAbiParameters(
-              parseAbiParameters('uint256[8]'),
-              proof!.proof as `0x${string}`
-            )[0]
-          ],
-        },
-      ],
-    })
+    // const result = await MiniKit.commandsAsync.sendTransaction({
+    //   transaction: [
+    //     {
+    //       address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+    //       abi: abi2,
+    //       functionName: 'addItem',
+    //       args: [
+    //         title,
+    //         author,
+    //         BigInt(originalPrice * 1000000000000000000),
+    //         BigInt(price * 1000000000000000000),
+    //         description,
+    //         BigInt(proof!.merkle_root),
+    //         BigInt(proof!.nullifier_hash),
+    //         decodeAbiParameters(
+    //           parseAbiParameters('uint256[8]'),
+    //           proof!.proof as `0x${string}`
+    //         )[0]
+    //       ],
+    //     },
+    //   ],
+    // })
 
-    console.log("result", result);
+    // console.log("result", result);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Get all form data
-    const formData = {
-      title,
-      description,
-      category,
-      image,
-      receipt,
-      verified,
-      price,
-      originalPrice
-    };
+    setIsSubmitting(true);
 
-    console.log("formData", formData);
-    // TODO: Add your form submission logic here
+    if (!fileInputRef.current?.files?.[0]) {
+      console.error('No image selected');
+      setIsSubmitting(false);
+      return;
+    }
 
-    await addMockItem(title, description, category, 0, price, originalPrice, MiniKit.user.walletAddress || '');
+    if (!price || !originalPrice) {
+      console.error('Price is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const file = fileInputRef.current.files[0];
+      const author = MiniKit.user.walletAddress || 'blablabla';
+      const imageId = `${author}-${title}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+      console.log("imageId", imageId);
+
+      // Upload image
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('id', imageId);
+
+      const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+      setImageUrl(data.id);
+
+      // Proceed with adding the item
+      console.log("Adding item");
+      await addItem(title, description, category, 0, price, originalPrice, author);
+      
+      // Show success message
+      setShowSuccess(true);
+      console.log("Showing success message");
+
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -198,6 +239,7 @@ export default function AddOfferScreen() {
           {/* Pricing Information */}
           <section className="form-section">
             <label className="section-title">Pricing Information</label>
+            
             <div className="price-inputs">
               <div className="input-group">
                 <label className="input-label">Current Price</label>
@@ -228,7 +270,7 @@ export default function AddOfferScreen() {
             </div>
             <div className="input-group">
               <label className="input-label">Purchase Date</label>
-              <input type="date" className="form-input" required />
+              <input type="date" className="form-input date-input" required value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)}/>
             </div>
           </section>
           
@@ -256,9 +298,19 @@ export default function AddOfferScreen() {
               {verifying ? 'Verifying...' : verified ? 'Verified!' : 'Verify Receipt'}
             </button>
           </section>
+
+          {showSuccess && (
+          <div className="success-message">
+            Offer successfully created! See it in the browse tab
+          </div>
+        )}
           
-          <button type="submit" className="submit-button" onClick={handleSubmit}>
-            Create Offer
+          <button 
+            type="submit" 
+            className={`submit-button ${isSubmitting ? 'submitting' : ''}`} 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Creating Offer...' : 'Create Offer'}
           </button>
         </form>
       </div>
@@ -267,6 +319,27 @@ export default function AddOfferScreen() {
         .add-offer-screen {
           min-height: 100vh;
           background: #ffffff;
+        }
+
+        .success-message {
+          background: #48bb78;
+          color: white;
+          padding: 16px;
+          border-radius: 12px;
+          text-align: center;
+          margin-bottom: 24px;
+          animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+          from {
+            transform: translateY(-20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
 
         .header {
@@ -368,6 +441,26 @@ export default function AddOfferScreen() {
         }
 
         .form-input:focus, .form-textarea:focus, .form-select:focus {
+          outline: none;
+          border-color: #4299e1;
+          box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+          background: white;
+        }
+
+        .date-input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 15px;
+          background: #f7fafc;
+          color: #2d3748;
+          transition: all 0.3s ease;
+          box-sizing: border-box;
+          height: 47px; /* Match the height of other inputs */
+        }
+
+        .date-input:focus {
           outline: none;
           border-color: #4299e1;
           box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -513,9 +606,19 @@ export default function AddOfferScreen() {
           margin-top: 8px;
         }
 
-        .submit-button:hover {
+        .submit-button:hover:not(:disabled) {
           transform: translateY(-2px);
           box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+        }
+
+        .submit-button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .submit-button.submitting {
+          background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+          animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {

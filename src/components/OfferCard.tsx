@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ImageDisplay from './ImageDisplay';
 
 export default function OfferCard({
   offer = undefined,
@@ -24,9 +25,13 @@ export default function OfferCard({
   return (
     <div className="offer-card">
       {/* Image */}
-      {offer?.imageUrl ? (
+      {/* {offer?.imageUrl ? (
         <div className="image-container">
-          <img src={offer.imageUrl} alt={offer.title} className="product-image" />
+          <ImageDisplay 
+            // imageId={offer.imageUrl}   
+            imageId={"blablabla-test"}
+            className="product-image"
+          />
         </div>
       ) : (
         <div className="image-placeholder">
@@ -34,12 +39,16 @@ export default function OfferCard({
             <div className="placeholder-icon">📱</div>
           </div>
         </div>
-      )}
+      )} */}
+        <ImageDisplay 
+          imageId={offer?.seller + "-" + offer?.title}
+          className="product-image"
+        />
 
       {/* Card content */}
       <div className="card-content">
         <div className="card-header">
-          <span className="category-badge">UI/UX Design</span>
+          <span className="category-badge">{offer?.category || 'UI/UX Design'}</span>
         </div>
 
         <h3 className="product-title">{offer?.title || 'MacBook M3'}</h3>
