@@ -131,8 +131,8 @@ function ProfileScreen() {
   return (
     <div className="profile-screen">
       <header className="header">
-        <h1 className="logo">wBay</h1>
-        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet</button>
+        <h1 className="logo">wBay 🛍️</h1>
+        <button onClick={connectWallet2} className="connect-wallet-btn">Wallet connected 💰</button>
       </header>
 
       <div className="content">

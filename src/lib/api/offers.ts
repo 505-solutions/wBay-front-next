@@ -11,6 +11,7 @@ export interface Offer {
   price: number;
   originalPrice: number;
   // location: string;
+  timestamp: number;
 }
 
 export async function fetchOffers(): Promise<Offer[]> {
@@ -63,9 +64,10 @@ export async function fetchOffers(): Promise<Offer[]> {
           title: item[0] || '',
           description: item[4] || '',
           imageUrl: '',
-          price: Number(item[2]) / 1000000000000000000,
-          originalPrice: Number(item[2] || item[3]) / 1000000000000000000,
+          price: Number(item[3]) / 1000000000000000000,
+          originalPrice: Number(item[2]) / 1000000000000000000,
           // location: item[5] || '',
+          timestamp: timestamps[i]
         });
       }
 

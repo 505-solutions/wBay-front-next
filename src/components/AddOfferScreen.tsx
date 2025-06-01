@@ -14,6 +14,7 @@ const categories = [
   'Home',
   'Sports',
   'Other',
+  'Technology'
 ];
 
 export default function AddOfferScreen() {
@@ -183,9 +184,9 @@ export default function AddOfferScreen() {
   return (
     <div className="add-offer-screen">
       <header className="header">
-        <h1 className="logo">wBay</h1>
-        <button onClick={connectWallet2} className="connect-wallet-btn">Connect Wallet: {MiniKit.user.walletAddress}</button>
-        <button onClick={testEml} className="connect-wallet-btn">Test EML</button>
+        <h1 className="logo">wBay 🛍️</h1>
+        <button onClick={connectWallet2} className="connect-wallet-btn">Wallet connected 💰</button>
+        {/* <button onClick={testEml} className="connect-wallet-btn">Test EML</button> */}
       </header>
 
       <div className="content">

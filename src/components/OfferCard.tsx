@@ -71,7 +71,7 @@ export default function OfferCard({
         </div>
       )} */}
         <ImageDisplay 
-          imageId={offer?.seller + "-" + offer?.title}
+          imageId={`${offer?.seller}-${offer?.title}`.toLowerCase().replace(/[^a-z0-9-]/g, '-')}
           className="product-image"
         />
       {/* Card content */}
@@ -82,10 +82,11 @@ export default function OfferCard({
 
         <h3 className="product-title">{offer?.title || 'MacBook M3'}</h3>
 
-        <div className="location">{offer?.location || 'Cupertino, CA'}</div>
+        <div className="location">Time of purchase: {new Date(offer?.timestamp * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
 
         <p className="description">
           {offer?.description || 'Premium laptop with cutting-edge performance and stunning design'}
+          <br />
           <br />
           <span className="original-price">Original Price: ${offer?.originalPrice || '1,299'}</span>
         </p>
