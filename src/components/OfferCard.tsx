@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import ImageDisplay from './ImageDisplay';
+import { MiniKit, Tokens } from '@worldcoin/minikit-js';
+import { PayCommandInput, tokenToDecimals } from '@worldcoin/minikit-js';
 
 export default function OfferCard({
   offer = undefined,
@@ -15,11 +17,36 @@ export default function OfferCard({
 
   const handleBuy = async () => {
     setBuying(true);
-    setSuccess(false);
-    await new Promise((r) => setTimeout(r, 1200));
+    // setSuccess(false);
+    
+    const payload: PayCommandInput = {
+      reference: "1234567890",
+      to: '0x4c44a6a5af7206b27d37d49e896b67a086e80042', // Test address
+      tokens: [
+        {
+          symbol: Tokens.WLD,
+          token_amount: tokenToDecimals(0.5, Tokens.WLD).toString(),
+        },
+        // {
+        //   symbol: Tokens.USDCE,
+        //   token_amount: tokenToDecimals(3, Tokens.USDCE).toString(),
+        // },
+      ],
+      description: 'Test example payment for minikit',
+    }
+
+    if (!MiniKit.isInstalled()) {
+      return
+    }
+
+    const { finalPayload } = await MiniKit.commandsAsync.pay(payload)
+
+    console.log("finalPayload", finalPayload);
+  
+    // await new Promise((r) => setTimeout(r, 1200));
     setBuying(false);
     setSuccess(true);
-    setTimeout(() => setSuccess(false), 2000);
+    // setTimeout(() => setSuccess(false), 2000);
   };
 
   return (
@@ -45,6 +72,7 @@ export default function OfferCard({
           className="product-image"
         />
 
+        <p>Success: {success.toString()}</p>
       {/* Card content */}
       <div className="card-content">
         <div className="card-header">
